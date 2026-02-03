@@ -86,8 +86,8 @@ x_train, x_test, y_train, y_test = train_test_split(
 
 # Step 2: BoW Vectorization
 vectorizer = CountVectorizer(ngram_range=(1, 3), max_features=1000)
-x_train_vec = vectorizer.fit_transform(x_train)
-x_test_vec = vectorizer.transform(x_test)
+x_train_vec = vectorizer.fit_transform(x_train).astype(np.float32)
+x_test_vec = vectorizer.transform(x_test).astype(np.float32)
 
 
 # Step 3: Apply SMOTE to handle class imbalance
