@@ -101,9 +101,9 @@ lightgbm_model = LGBMClassifier(
     class_weight = 'balanced',
     reg_alpha = 0.1,
     reg_lambda = 0.1,
-    learning_rate = 0.24412363272845405,
+    learning_rate = 0.28693034784335925,
     n_estimators = 100,
-    max_depth = 30,
+    max_depth = 21,
     random_state = 42
 )
 
