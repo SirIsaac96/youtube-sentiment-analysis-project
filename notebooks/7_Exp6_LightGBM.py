@@ -196,7 +196,6 @@ def run_optuna_study():
 
         fig = optuna.visualization.plot_param_importances(study)
         mlflow.log_figure(fig, f"lightgbm_param_importance.png")
-        plt.close(fig)
 
         # Log script (Exp6_LightGBM.py) as an artifact
         try:
