@@ -148,6 +148,7 @@ def lightgbm_objective(trial):
         "num_class": 3,
         "metric": "multi_logloss",
         "boosting_type": "gbdt",
+        "n_estimators": trial.suggest_int("n_estimators", 100, 500),
         "learning_rate": trial.suggest_float("learning_rate", 1e-4, 3e-1, log=True),
         "num_leaves": trial.suggest_int("num_leaves", 31, 128),
         "max_depth": trial.suggest_int("max_depth", 5, 30),
@@ -187,7 +188,6 @@ def run_optuna_study():
 
         mlflow.log_params(best_params)
         mlflow.log_metric("best_accuracy", study.best_value)
-        mlflow.log_metric("best_f1_weighted", study.best_value)
 
         mlflow.sklearn.log_model(
             best_model,
