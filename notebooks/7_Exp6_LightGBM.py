@@ -8,7 +8,7 @@ import mlflow
 import mlflow.sklearn
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import classification_report, accuracy_score
+from sklearn.metrics import classification_report, accuracy_score, f1_score
 from sklearn.feature_extraction.text import CountVectorizer
 from imblearn.over_sampling import SMOTE
 from lightgbm import LGBMClassifier
@@ -120,6 +120,10 @@ def log_mlflow_results(model, x_train, x_test, y_train, y_test, params, trial_nu
         accuracy = accuracy_score(y_test, y_pred)
         mlflow.log_metric("accuracy", accuracy)
 
+        # F1 Score (weighted)
+        f1_weighted = f1_score(y_test, y_pred, average = "weighted")
+        mlflow.log_metric("f1_weighted", f1_weighted)
+
         # Classification report
         report = classification_report(y_test, y_pred, output_dict=True, zero_division=0)
         for cls, metrics in report.items():
@@ -133,7 +137,7 @@ def log_mlflow_results(model, x_train, x_test, y_train, y_test, params, trial_nu
             name = f"trial_{trial_number}_model"
         )
 
-        return accuracy
+        return f1_weighted
 
 
 # Step 6: Hyperparameter Tuning for LightGBM Classifier (Optuna objective function)
@@ -183,6 +187,7 @@ def run_optuna_study():
 
         mlflow.log_params(best_params)
         mlflow.log_metric("best_accuracy", study.best_value)
+        mlflow.log_metric("best_f1_weighted", study.best_value)
 
         mlflow.sklearn.log_model(
             best_model,
@@ -192,6 +197,12 @@ def run_optuna_study():
         fig = optuna.visualization.plot_param_importances(study)
         mlflow.log_figure(fig, f"lightgbm_param_importance.png")
         plt.close(fig)
+
+        # Log script (Exp6_LightGBM.py) as an artifact
+        try:
+            mlflow.log_artifact(__file__)
+        except Exception:
+            pass
 
 
 # Step 8: Execute the Optuna study
