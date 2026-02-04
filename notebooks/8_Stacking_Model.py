@@ -101,9 +101,9 @@ lightgbm_model = LGBMClassifier(
     class_weight = 'balanced',
     reg_alpha = 0.1,
     reg_lambda = 0.1,
-    learning_rate = 0.28693034784335925,
-    n_estimators = 100,
-    max_depth = 21,
+    learning_rate = 0.20865771717856804,
+    n_estimators = 225,
+    max_depth = 22,
     random_state = 42
 )
 
@@ -149,9 +149,9 @@ with mlflow.start_run(run_name="Stacking_LGBM_LR_KNN_BoW"):
 
     # Log LightGBM params
     mlflow.log_params({
-        "lgb_learning_rate": 0.24412363272845405,
-        "lgb_n_estimators": 100,
-        "lgb_max_depth": 30,
+        "lgb_learning_rate": 0.20865771717856804,
+        "lgb_n_estimators": 225,
+        "lgb_max_depth": 22,
         "lgb_reg_alpha": 0.1,
         "lgb_reg_lambda": 0.1
     })
@@ -173,7 +173,7 @@ with mlflow.start_run(run_name="Stacking_LGBM_LR_KNN_BoW"):
 
     # Metrics
     accuracy = accuracy_score(y_test, y_pred)
-    f1_weighted = f1_score(y_test, y_pred, average="weighted")
+    f1_weighted = f1_score(y_test, y_pred, average = "weighted")
 
     mlflow.log_metric("accuracy", accuracy)
     mlflow.log_metric("f1_weighted", f1_weighted)
