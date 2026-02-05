@@ -74,7 +74,7 @@ def preprocess_data(data: pd.DataFrame) -> pd.DataFrame:
     try:
         data = data.dropna() # drop missing values
         data = data.drop_duplicates(inplace = True) # drop duplicates
-        data = data[~(data['clean_text'].str.strip() == '')] # drop empty strings
+        data = data[data['clean_text'].str.strip() != ''] # drop empty strings
         logger.debug(f"Dropped missing values, duplicates and empty strings. Remaining data shape: {data.shape}")
         return data
     
