@@ -72,9 +72,9 @@ def read_data(file_path: str) -> pd.DataFrame:
 def preprocess_data(data: pd.DataFrame) -> pd.DataFrame:
     """Preprocesses the data by handling missing values, duplicates and empty strings."""
     try:
-        data = data.dropna() # drop missing values
-        data = data.drop_duplicates(inplace = True) # drop duplicates
-        data = data[data['clean_text'].str.strip() != ''] # drop empty strings
+        data.dropna() # drop missing values
+        data.drop_duplicates(inplace = True) # drop duplicates
+        data = data[~(data['text'].str.strip() == '')] # drop empty strings
         logger.debug(f"Dropped missing values, duplicates and empty strings. Remaining data shape: {data.shape}")
         return data
     
@@ -123,7 +123,7 @@ def main():
         logger.debug(f"Data split into train and test sets with test size {test_size}")
 
         # Save the train and test sets
-        save_data(train_data, test_data, data_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../data'))
+        save_data(train_data, test_data, output_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../data'))
 
     except Exception as e:
         logger.error(f"Failed to complete data ingestion process: {e}")
