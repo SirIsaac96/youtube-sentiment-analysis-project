@@ -7,3 +7,38 @@ stages:
     - data_ingestion.test_size
     outs:
     - data/raw
+  data_preprocessing:
+    cmd: python src/data/data_preprocessing.py
+    deps:
+    - data/raw
+    - src/data/data_preprocessing.py
+    outs:
+    - data/processed
+  model_building:
+    cmd: python src/model/model_building.py
+    deps:
+    - data/processed
+    - src/model/model_building.py
+    params:
+    - model_building.learning_rate
+    - model_building.max_depth
+    - model_building.max_features
+    - model_building.n_estimators
+    - model_building.ngram_range
+    outs:
+    - bow_vectorizer.pkl
+    - lgbm_model.pkl
+  model_evaluation:
+    cmd: python src/model/model_evaluation.py
+    deps:
+    - bow_vectorizer.pkl
+    - data/processed
+    - lgbm_model.pkl
+    - src/model/model_evaluation.py
+    outs:
+    - model_info.json
+  model_registration:
+    cmd: python src/model/model_registration.py
+    deps:
+    - model_info.json
+    - src/model/model_registration.py

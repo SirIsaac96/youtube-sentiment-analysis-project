@@ -5,14 +5,98 @@ stages:
     deps:
     - path: src/data/data_ingestion.py
       hash: md5
-      md5: ce68bef524b388e6c1f3aaee9e22cd75
-      size: 4415
+      md5: 079418127d4cc582ad3d43a404b61cee
+      size: 4414
     params:
       params.yaml:
         data_ingestion.test_size: 0.2
     outs:
     - path: data/raw
       hash: md5
-      md5: acb7de9507de2ff2c975ef09f28ee693.dir
-      size: 67355751
+      md5: 9c7ba8b0589aabfe5e063cfc772cba62.dir
+      size: 67355747
       nfiles: 2
+  data_preprocessing:
+    cmd: python src/data/data_preprocessing.py
+    deps:
+    - path: data/raw
+      hash: md5
+      md5: 9c7ba8b0589aabfe5e063cfc772cba62.dir
+      size: 67355747
+      nfiles: 2
+    - path: src/data/data_preprocessing.py
+      hash: md5
+      md5: 7c9a10c905945851fbfdbe30a6e3be65
+      size: 4836
+    outs:
+    - path: data/processed
+      hash: md5
+      md5: 3448552f31cdca40c03a9caba96decbd.dir
+      size: 108255363
+      nfiles: 2
+  model_building:
+    cmd: python src/model/model_building.py
+    deps:
+    - path: data/processed
+      hash: md5
+      md5: 3448552f31cdca40c03a9caba96decbd.dir
+      size: 108255363
+      nfiles: 2
+    - path: src/model/model_building.py
+      hash: md5
+      md5: db8407459bb0f55a9038f3db6e73c8a8
+      size: 5999
+    params:
+      params.yaml:
+        model_building.learning_rate: 0.20865771717856804
+        model_building.max_depth: 22
+        model_building.max_features: 1000
+        model_building.n_estimators: 225
+        model_building.ngram_range:
+        - 1
+        - 3
+    outs:
+    - path: bow_vectorizer.pkl
+      hash: md5
+      md5: 824ed870aa16e0adce2f3eaa343386c0
+      size: 28408
+    - path: lgbm_model.pkl
+      hash: md5
+      md5: 1c444065799b34a51450b44ebf2d541d
+      size: 2465205
+  model_evaluation:
+    cmd: python src/model/model_evaluation.py
+    deps:
+    - path: bow_vectorizer.pkl
+      hash: md5
+      md5: 824ed870aa16e0adce2f3eaa343386c0
+      size: 28408
+    - path: data/processed
+      hash: md5
+      md5: 3448552f31cdca40c03a9caba96decbd.dir
+      size: 108255363
+      nfiles: 2
+    - path: lgbm_model.pkl
+      hash: md5
+      md5: 1c444065799b34a51450b44ebf2d541d
+      size: 2465205
+    - path: src/model/model_evaluation.py
+      hash: md5
+      md5: 2e3e81b276a0767850fbd09ad03f2e99
+      size: 7832
+    outs:
+    - path: model_info.json
+      hash: md5
+      md5: c300382755bd45bca55da7a0fec80b95
+      size: 181
+  model_registration:
+    cmd: python src/model/model_registration.py
+    deps:
+    - path: model_info.json
+      hash: md5
+      md5: c300382755bd45bca55da7a0fec80b95
+      size: 181
+    - path: src/model/model_registration.py
+      hash: md5
+      md5: d24d9702e4789e2f449b328b49a6227a
+      size: 4186

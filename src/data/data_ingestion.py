@@ -70,9 +70,9 @@ def read_data(file_path: str) -> pd.DataFrame:
 
 
 def preprocess_data(data: pd.DataFrame) -> pd.DataFrame:
-    """Preprocesses the data by handling missing values, duplicates and empty strings."""
+    """Preprocesses the data by handling missing values and duplicates."""
     try:
-        data.dropna() # drop missing values
+        data.dropna(inplace = True) # drop missing values
         data.drop_duplicates(inplace = True) # drop duplicates
         data = data[~(data['text'].str.strip() == '')] # drop empty strings
         logger.debug(f"Dropped missing values, duplicates and empty strings. Remaining data shape: {data.shape}")
