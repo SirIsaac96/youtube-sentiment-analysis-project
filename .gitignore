@@ -11,7 +11,6 @@ models/*
 reports/*
 docs/*
 youtube-chrome-plugin-frontend/*
-FlaskAPI/*
 
 # Distribution / packaging
 .Python
