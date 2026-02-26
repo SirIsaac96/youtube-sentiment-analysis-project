@@ -70,7 +70,7 @@ def get_root_directory() -> str:
 
 
 # Function to apply Bag of Words transformation
-def appy_bow(train_data: pd.DataFrame, max_features: int, ngram_range: tuple):
+def appy_bow(train_data: pd.DataFrame, max_features: int, ngram_range: tuple, models_dir: str):
     try:
         vectorizer = CountVectorizer(max_features=max_features, ngram_range=ngram_range)
         x_train = train_data['clean_text']
@@ -79,7 +79,12 @@ def appy_bow(train_data: pd.DataFrame, max_features: int, ngram_range: tuple):
         # Fit and transform the training data
         x_train_vec = vectorizer.fit_transform(x_train).astype(np.float32)
 
-        with open(os.path.join(get_root_directory(), 'bow_vectorizer.pkl'), 'wb') as file:
+        # Ensure models directory exists
+        os.makedirs(models_dir, exist_ok=True)
+
+        # Save vectorizer under /models
+        vectorizer_path = os.path.join(models_dir, 'bow_vectorizer.pkl')
+        with open(vectorizer_path, 'wb') as file:
             pickle.dump(vectorizer, file)
 
         logger.debug(f"Bag of Words transformation completed. Train shape: {x_train_vec.shape}")
@@ -160,13 +165,18 @@ def main():
         max_depth = config['model_building']['max_depth']
         n_estimators = config['model_building']['n_estimators']
 
+        # Ensure /models directory exists
+        models_dir = os.path.join(root_dir, 'models')
+        os.makedirs(models_dir, exist_ok=True)
+
         # Load and preprocess training data
         train_data = read_data(os.path.join(root_dir, 'data/processed/train_data_processed.csv'))
-        x_train_vec, y_train, vectorizer = appy_bow(train_data, max_features, ngram_range)
+        x_train_vec, y_train, vectorizer = appy_bow(train_data, max_features, ngram_range, models_dir)
         best_model = train_model(x_train_vec, y_train, learning_rate, max_depth, n_estimators)
 
-        # Save the trained model
-        save_model(best_model, os.path.join(root_dir, 'lgbm_model.pkl'))
+        # Save the trained model under /models
+        model_path = os.path.join(models_dir, 'lgbm_model.pkl')
+        save_model(best_model, model_path)
 
         dagshub.init(repo_owner='SirIsaac96', repo_name='youtube-sentiment-analysis-project', mlflow=True)
         mlflow.set_tracking_uri('https://dagshub.com/SirIsaac96/youtube-sentiment-analysis-project.mlflow')
@@ -186,7 +196,8 @@ def main():
                 input_example = input_example
             )
 
-            mlflow.log_artifact(os.path.join(root_dir, 'bow_vectorizer.pkl'))
+            # Log vectorizer from /models
+            mlflow.log_artifact(os.path.join(models_dir, 'bow_vectorizer.pkl'))
             logger.info(f"Model logged to MLflow under run {run.info.run_id}")
 
             # Save the model run info

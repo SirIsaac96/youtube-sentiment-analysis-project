@@ -38,7 +38,7 @@ logger.addHandler(file_handler)
 
 
 # Utility functions
-# Function to read data
+# Function to load data
 def read_data(file_path: str) -> pd.DataFrame:
     try:
         data = pd.read_csv(file_path)
@@ -122,7 +122,7 @@ def log_conf_matrix(conf_matrix, dataset_name):
         raise
 
 
-# Function to save model information for registration stage
+# Function to save model information
 def save_model_info(run_id: str, model_path: str, file_path: str):
     try:
         model_info = {
@@ -158,10 +158,13 @@ def main():
             for key, value in config.items():
                 mlflow.log_param(key, value)
 
+            # Ensure /models directory exists
+            models_dir = os.path.join(root_dir, 'models')
+
             # Load test data, model, and vectorizer
-            test_data = read_data('data/processed/test_data_processed.csv')
-            model = load_model(os.path.join(root_dir, 'lgbm_model.pkl'))
-            vectorizer = load_vectorizer(os.path.join(root_dir, 'bow_vectorizer.pkl'))
+            test_data = read_data(os.path.join(root_dir, 'data/processed/test_data_processed.csv'))
+            model = load_model(os.path.join(models_dir, 'lgbm_model.pkl'))
+            vectorizer = load_vectorizer(os.path.join(models_dir, 'bow_vectorizer.pkl'))
 
             # Transform test data
             x_test_vec = vectorizer.transform(test_data['clean_text']).astype(np.float32)
@@ -174,7 +177,7 @@ def main():
             model_path = training_info['model_path'] 
 
             # Save model info for registration stage
-            save_model_info(model_run_id, model_path, 'model_info.json')
+            save_model_info(model_run_id, model_path, os.path.join(root_dir, 'model_info.json'))
 
             # Evaluate and log metrics
             class_report, conf_matrix, acc_score = evaluate_model(model, x_test_vec, y_test)
