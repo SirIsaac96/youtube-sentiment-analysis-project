@@ -168,10 +168,13 @@ def load_model_and_vectorizer(model_path, vectorizer_path):
 
 
 # Initialize model and vectorizer
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+model_dir_path = os.path.join(BASE_DIR, "lgbm_model.pkl")
+vectorizer_dir_path = os.path.join(BASE_DIR, "bow_vectorizer.pkl")
 try:
     model, vectorizer = load_model_and_vectorizer(
-        "./lgbm_model.pkl",
-        "./bow_vectorizer.pkl"
+        model_dir_path,
+        vectorizer_dir_path
     )
 except Exception as e:
     logger.exception("Failed to load model/vectorizer: %s", e)
