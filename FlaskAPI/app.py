@@ -168,16 +168,10 @@ def load_model_and_vectorizer(model_path, vectorizer_path):
 
 
 # Initialize model and vectorizer
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # /app/FlaskAPI
-models_dir = os.path.join(BASE_DIR, "..", "models")    # /app/models
-
-model_dir_path = os.path.join(models_dir, "lgbm_model.pkl")
-vectorizer_dir_path = os.path.join(models_dir, "bow_vectorizer.pkl")
-
 try:
     model, vectorizer = load_model_and_vectorizer(
-        model_dir_path,
-        vectorizer_dir_path
+        "./models/lgbm_model.pkl",
+        "./models/bow_vectorizer.pkl"
     )
 except Exception as e:
     logger.exception("Failed to load model/vectorizer: %s", e)
