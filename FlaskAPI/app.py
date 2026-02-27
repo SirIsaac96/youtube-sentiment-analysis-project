@@ -155,8 +155,8 @@ def load_model_and_vectorizer(model_path, vectorizer_path):
         raise FileNotFoundError(f"Vectorizer file not found: {vectorizer_path}")
 
     # Load the model
-    with open(model_path, "rb") as file:
-        model = pickle.load(file)
+    with open(model_path, "rb") as f:
+        model = pickle.load(f)
     logger.info("Model loaded successfully.")
 
     # Load the vectorizer
@@ -168,14 +168,21 @@ def load_model_and_vectorizer(model_path, vectorizer_path):
 
 
 # Initialize model and vectorizer
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # /app/FlaskAPI
+models_dir = os.path.join(BASE_DIR, "..", "models")    # /app/models
+
+model_dir_path = os.path.join(models_dir, "lgbm_model.pkl")
+vectorizer_dir_path = os.path.join(models_dir, "bow_vectorizer.pkl")
+
 try:
     model, vectorizer = load_model_and_vectorizer(
-        "./models/lgbm_model.pkl",
-        "./models/bow_vectorizer.pkl"
+        model_dir_path,
+        vectorizer_dir_path
     )
 except Exception as e:
     logger.exception("Failed to load model/vectorizer: %s", e)
     model, vectorizer = None, None
+
 
 
 # Routes
