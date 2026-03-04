@@ -1,15 +1,22 @@
 # YouTube Comments Sentiment Analysis System
 
-[![CI/CD Pipeline](https://github.com/SirIsaac96/youtube-sentiment-analysis-project/actions/workflows/main.yml/badge.svg)](https://github.com/SirIsaac96/youtube-sentiment-analysis-project/actions)
+[![CI/CD Pipeline](https://github.com/SirIsaac96/youtube-sentiment-analysis-project/actions/workflows/cicd.yaml/badge.svg)](https://github.com/SirIsaac96/youtube-sentiment-analysis-project/actions)
 [![MLflow Tracking](https://img.shields.io/badge/MLflow-Tracking-blue)](https://dagshub.com/SirIsaac96/youtube-sentiment-analysis-project)
 [![Docker](https://img.shields.io/badge/Docker-Enabled-blueviolet)](https://www.docker.com/)
-[![Deployment](https://img.shields.io/badge/Render-Deployed-brightgreen)](https://your-render-app-url.com)
+[![Deployment](https://img.shields.io/badge/Render-Deployed-brightgreen)](https://youtube-sentiment-analysis-project.onrender.com/)
 
-An end-to-end MLOps project that analyzes the sentiment of educational YouTube comments in real-time. This system features a DVC-versioned ML pipeline, experiment tracking via MLflow, and a Chrome extension that integrates with a Flask-based inference API.
+An end-to-end production-grade MLOps system that analyzes sentiment from educational YouTube comments in real-time.
 
-## Overview
+The project implements the full ML lifecycle:
+data collection → experimentation → reproducible pipeline → model registry → API serving → CI/CD → cloud deployment.
 
-This project solves the problem of quickly analyzing audience feedback on educational content. Instead of reading thousands of comments, the Chrome Extension provides an instant sentiment summary directly on the YouTube watch page.
+A Chrome Extension integrates directly with a deployed Flask API to deliver instant sentiment summaries on the YouTube watch page.
+
+## Live Deployment
+
+The Flask API is deployed on Render and serves real-time predictions.
+
+You can test it using Postman or curl by sending a POST request with a JSON list of comments.
 
 ---
 
@@ -104,7 +111,7 @@ The goal was to collect educational-quality content comments for sentiment model
 
 ---
 
-# 🔹 2. Data Preprocessing & EDA
+# 2. Data Preprocessing & EDA
 
 Performed in:
 
@@ -210,23 +217,22 @@ This model achieved the best macro F1-score and generalization capability and wa
 
 ## Experiment Tracking
 
-All experiments were tracked using:
+All experiments were tracked using MLflow hosted on DagsHub.
 
-- :contentReference[oaicite:0]{index=0}  
-- :contentReference[oaicite:1]{index=1}  
+Tracked artifacts included:
 
-Tracked elements:
-
-- Hyperparameters  
+- Model hyperparameters  
 - Vectorizer configurations  
-- Imbalance strategies  
-- Evaluation metrics (Accuracy, Precision, Recall, Macro F1)
+- Imbalance handling strategies  
+- Evaluation metrics (Accuracy, Precision, Recall, Macro F1-score)  
+- Serialized model artifacts  
 
-This ensured:
+This enabled:
 
-- Reproducibility  
-- Transparent model comparison  
-- Structured model selection  
+- Structured comparison across experiments  
+- Transparent model selection  
+- Versioned experiment history  
+- Reproducibility across environments    
 
 ---
 
@@ -234,7 +240,7 @@ This ensured:
 
 The workflow is orchestrated using:
 
-- :contentReference[oaicite:2]{index=2}  
+- DVC (Data Version Control) 
 
 Pipeline stages defined in `dvc.yaml`:
 
@@ -256,7 +262,7 @@ dvc repro
 
 The trained model is served using:
 
-- :contentReference[oaicite:3]{index=3}  
+- Flask (Python web framework)  
 
 The API:
 
@@ -290,7 +296,7 @@ Extension code excluded due to API security.
 
 Containerized using:
 
-- :contentReference[oaicite:4]{index=4}  
+- Docker  
 
 Build locally:
 
@@ -305,7 +311,7 @@ docker run -p 5000:5000 yt-sentiment
 
 Automated with:
 
-- :contentReference[oaicite:5]{index=5} Actions  
+- GitHub Actions  
 
 Workflow includes:
 
@@ -319,13 +325,26 @@ Workflow includes:
 
 API deployed on:
 
-- :contentReference[oaicite:6]{index=6}  
+- Render (Cloud Platform)  
 
 Render handles:
 
 - Container deployment  
 - Public API endpoint exposure  
 - Automatic redeployments on push  
+
+---
+
+# Inference Design Considerations
+
+The deployed model was selected not only for performance but also for:
+
+- Balanced multiclass F1-score  
+- Inference latency suitability for real-time browser integration  
+- Model size constraints for container deployment  
+- Stability across validation splits  
+
+This ensured reliable real-time predictions when integrated with the Chrome Extension.
 
 ---
 
